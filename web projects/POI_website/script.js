@@ -45,7 +45,6 @@ btn.addEventListener('click', function () {
                     .then(photo => {
                         console.log(photo);
                         let link = '';
-                        // photo['response']['photos']['items'][0]['source']
                         console.log(photo['response']['photos']['items'][0]['source']);
                         let source = photo['response']['photos']['items'][0];
                         let prefix = source['prefix'];;
@@ -54,10 +53,15 @@ btn.addEventListener('click', function () {
                         console.log(link);
 
 
-                        let container=document.querySelector("section");
+                        let container=document.getElementById("contain");
                         let div=document.createElement("div");
-                        div.appendChild(document.createTextNode(link));
+                        let img=document.createElement("img");
+                        img.src=link;
+                        // div.innerHTML=link;
                         container.appendChild(div);
+                        div.appendChild(img);
+
+
 
                     });
 
