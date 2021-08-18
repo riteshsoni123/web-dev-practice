@@ -1,14 +1,43 @@
 
 
 
-var button = document.querySelector('.btn');
-var origin = document.querySelector('.origin');
-var destination = document.querySelector('.destination');
+function tmp() {
+	let country = "";
+
+	fetch('./countries.json')
+		.then(res => res.json())
+		.then(data => {
+			country = data;
+			// return country.result;
+			// console.log(country);
+			for (let i = 0; i < 243; i++) {
+
+				let originElement = document.createElement("option");
+				let destinationElement = document.createElement("option");
+
+				originElement.value = country[i]['name'];
+				destinationElement.value = country[i]['name'];
+
+				document.getElementById("origin").appendChild(originElement);
+				document.getElementById("destination").appendChild(destinationElement);
+
+			}
+		});
+}
+
+tmp();
+
+
+
+let button = document.querySelector('.btn');
+let origin = document.querySelector('.origin');
+let destination = document.querySelector('.destination');
 origin.value = "IN";
 destination.value = "US";
 
 
 btn.addEventListener('click', function () {
+
 
 	fetch(`https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/${origin.value}/INR/${origin.value}/${origin.value}/${destination.value}/2021-08-21?inboundpartialdate=2021-08-21`, {
 		"method": "GET",
@@ -20,71 +49,74 @@ btn.addEventListener('click', function () {
 		.then(resp => resp.json())
 		.then(result => {
 			console.log(result);
-			let count=0;
-			for (let i = 0; i < 50; i++) {
+			let count = 0;
+			let routelength = result['Routes']['length'];
+			routelength = Number(routelength);
+			for (let i = 0; i < routelength; i++) {
 
-				let destinationId=result["Routes"][i]["DestinationId"];
-				let price=result["Routes"][i]["Price"];
-				let datetime=result["Routes"][i]["QuoteDateTime"];
+				let destinationId = result["Routes"][i]["DestinationId"];
+				let price = result["Routes"][i]["Price"];
+				let datetime = result["Routes"][i]["QuoteDateTime"];
 
 				if (price != undefined) {
 
-					console.log("Number=",count);
-					console.log("price=",price);
+					console.log("Number=", count);
+					console.log("price=", price);
 
-					let quoteId=result["Routes"][i]["QuoteIds"][0];
-					let quotelength=result["Quotes"]["length"];
+					let quoteId = result["Routes"][i]["QuoteIds"][0];
+					let quotelength = result["Quotes"]["length"];
 
-					quotelength=Number(quotelength);
+					quotelength = Number(quotelength);
 
-					for(let j=0;j<quotelength;j++){
+					for (let j = 0; j < quotelength; j++) {
 
-						if(quoteId==result['Quotes'][j]['QuoteId']){
+						if (quoteId == result['Quotes'][j]['QuoteId']) {
 
-							let departureDate=result['Quotes'][j]['OutboundLeg']['DepartureDate'];
-							let originId=result['Quotes'][j]['OutboundLeg']['OriginId'];
-							let carrierId=result['Quotes'][j]['OutboundLeg']['CarrierIds'][0];
-							let placelength=result['Places']['length'];
+							let departureDate = result['Quotes'][j]['OutboundLeg']['DepartureDate'];
+							let originId = result['Quotes'][j]['OutboundLeg']['OriginId'];
+							let carrierId = result['Quotes'][j]['OutboundLeg']['CarrierIds'][0];
+							let placelength = result['Places']['length'];
 
-							console.log("DepartureDate=",departureDate);
+							console.log("DepartureDate=", departureDate);
 
-							placelength=Number(placelength);
+							placelength = Number(placelength);
 
-							for(let k=0;k<placelength;k++){
+							for (let k = 0; k < placelength; k++) {
 
-								if(destinationId==result['Places'][k]['PlaceId']){
+								if (destinationId == result['Places'][k]['PlaceId']) {
 
-									let destinationCity=result['Places'][k]['CityName'];
-									let destinationCountry=result['Places'][k]['CountryName'];
+									let destinationCity = result['Places'][k]['CityName'];
+									let destinationCountry = result['Places'][k]['CountryName'];
 
-									console.log("DestinationCity=",destinationCity);
-									console.log("DestinatonCountry=",destinationCountry);
-
-								}
-								else if(originId==result['Places'][k]['PlaceId']){
-
-									let originCity=result['Places'][k]['CityName'];
-									let originCountry=result['Places'][k]['CountryName'];
-
-									console.log("OriginCity=",originCity);
-									console.log("OriginCountry=",originCountry);
+									console.log("DestinationCity=", destinationCity, destinationId);
+									console.log("DestinatonCountry=", destinationCountry);
 
 								}
-								else{
+								else if (originId == result['Places'][k]['PlaceId']) {
+
+									let originCity = result['Places'][k]['CityName'];
+									let originCountry = result['Places'][k]['CountryName'];
+
+									console.log("OriginCity=", originCity);
+									console.log("OriginCountry=", originCountry);
+
+								}
+								else {
 									continue;
 								}
 							}
 
-							let carrierlength=result['Carriers']['length'];
+							let carrierlength = result['Carriers']['length'];
 
-							carrierlength=Number(carrierlength);
+							carrierlength = Number(carrierlength);
 
-							for(let k=0;k<carrierlength;k++){
+							for (let k = 0; k < carrierlength; k++) {
 
-								if(carrierId==result['Carriers'][k]['CarrierId']){
+								if (carrierId == result['Carriers'][k]['CarrierId']) {
 
-									let carrierName=result['Carriers'][k]['Name'];
-									console.log("CarrierName=",carrierName);
+									let carrierName = result['Carriers'][k]['Name'];
+									console.log("CarrierName=", carrierName);
+									// console.log("\n");
 
 								}
 							}
@@ -92,9 +124,10 @@ btn.addEventListener('click', function () {
 						}
 					}
 					count++;
-					if(count==3){
-						break;
-					}
+					// if (count == 8) {
+					// 	break;
+					// }
+					console.log("\n");
 				}
 
 			}
